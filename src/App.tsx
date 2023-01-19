@@ -13,6 +13,9 @@ function App() {
       <header className="App-header">
         <WebcamVideo height={height} width={width}></WebcamVideo>
         {/* <video id="webcamVideo" height={constraints.height} width={constraints.width} autoPlay muted playsInline ></video> */}
+        <div id="outputText"></div>
+        <div id="outputConstraintError"></div>
+        <div id="outputFlipState"></div>
       </header>
     </div>
   );

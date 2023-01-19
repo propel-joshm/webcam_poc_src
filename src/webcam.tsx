@@ -7,9 +7,15 @@ function WebcamVideo(props: any) {
     const [torchState, setTorchState] = useState(false);
     const [cameraEnabled, setCameraEnabled] = useState(false);
     const [photoTaken, setPhotoTaken] = useState(false);
+    const [cameraFlipState, setCameraFlipState] = useState("environment");
 
     const webcamVideo = document.getElementById("webcamVideo") as HTMLVideoElement;
     const webcamPicture = document.getElementById("webcamPicture") as HTMLCanvasElement;
+
+    const outputText = document.getElementById("outputText");
+    const outputConstraintError = document.getElementById("outputConstraintError");
+    const outputFlipState = document.getElementById("outputFlipState");
+    if (outputFlipState) outputFlipState.textContent = `Flip State: ${cameraFlipState}`;
 
     const toggleTorchState = () => setTorchState(!torchState);
     const resetPicture = () => setPhotoTaken(false);
@@ -22,14 +28,26 @@ function WebcamVideo(props: any) {
         let canvasContext = webcamPicture.getContext('2d');
         if (canvasContext != null) canvasContext.drawImage(webcamVideo, 0, 0, props.width, props.height)
     };
+
     const constraints = {
         height: props.height,
         width: props.width,
         video: {
-            facingMode: ['user', 'environment'],
-            deviceId: '' as ConstrainDOMString
+            facingMode: { exact: cameraFlipState },
+            //deviceId: '' as ConstrainDOMString
         } as MediaTrackConstraints
     };
+
+    function flipper() {
+
+        if (cameraFlipState === "environment" ) {
+            setCameraFlipState("user");
+        } else {
+            setCameraFlipState("environment");
+        }
+
+        if (outputFlipState) outputFlipState.textContent = `Flip State: ${cameraFlipState}`;
+    }
 
     useEffect(() => {
 
@@ -39,7 +57,10 @@ function WebcamVideo(props: any) {
         navigator.mediaDevices.enumerateDevices().then((devices) => {
             const cameras = devices.filter((device) => device.kind === "videoinput");
             const camera = cameras[cameras.length - 1];
-            constraints.video.deviceId = camera.deviceId;
+            
+            if (outputText) outputText.textContent = `Device Id: ${camera.deviceId}`
+            console.log(camera);
+            //constraints.video.deviceId = camera.deviceId;
 
             navigator.mediaDevices.getUserMedia(constraints)
               .then((stream) => {
@@ -51,12 +72,13 @@ function WebcamVideo(props: any) {
                         torch: torchState,
                       } as MediaTrackConstraintsOES,
                     ],
-                  }).catch((err) => {
-                    console.log(err);
+                  }).catch((err:OverconstrainedError) => {
+                    console.error(err);
                   });
             })
             .catch((err) => {
                 console.log(err);
+                if(outputConstraintError) outputConstraintError.textContent = `Constraint Error: ${err.constraint}`;
             });
         });
     }, [webcamVideo, torchState, photoTaken])
@@ -69,6 +91,8 @@ function WebcamVideo(props: any) {
             <button type="button" id="toggleTorch" onClick={toggleTorchState}>Toggle Flash</button>
             <button type="button" onClick={takePicture}>Take Photo</button>
             <button type="button" onClick={resetPicture}>Reset Photo</button>
+            <button type="button" onClick={flipper}>Attempt to Flip Camera</button>
+            
             <div></div>
         </div>
     )
