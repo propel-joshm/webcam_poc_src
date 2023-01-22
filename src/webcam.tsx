@@ -3,7 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { MediaTrackConstraintsOES } from './interfaces/MediaStreamTrackSetOES';
 import './App.css';
 
-function WebcamVideo(props: any) {
+function One(props: any) {
+
+    const height = 480;
+    const width = 480;
+
     const [torchState, setTorchState] = useState(false);
     const [cameraEnabled, setCameraEnabled] = useState(false);
     const [photoTaken, setPhotoTaken] = useState(false);
@@ -22,16 +26,16 @@ function WebcamVideo(props: any) {
     const takePicture = () => {
         setPhotoTaken(true);
 
-        webcamPicture.width = props.width;
-        webcamPicture.height = props.height;
+        webcamPicture.width = width;
+        webcamPicture.height = height;
 
         let canvasContext = webcamPicture.getContext('2d');
-        if (canvasContext != null) canvasContext.drawImage(webcamVideo, 0, 0, props.width, props.height)
+        if (canvasContext != null) canvasContext.drawImage(webcamVideo, 0, 0, width, height)
     };
 
     const constraints = {
-        height: props.height,
-        width: props.width,
+        height: height,
+        width: width,
         video: {
             facingMode: { exact: cameraFlipState },
             //deviceId: '' as ConstrainDOMString
@@ -86,8 +90,8 @@ function WebcamVideo(props: any) {
     return (
        
         <div>
-            <video id="webcamVideo" height={props.height} style={{ display: (!photoTaken && cameraEnabled) ? "block" : "none" }} width={props.width} autoPlay muted playsInline ></video>
-            <canvas id="webcamPicture" style={{ display: (photoTaken && cameraEnabled) ? "block" : "none" }} width={props.width} height={props.height}></canvas>
+            <video id="webcamVideo" height={height} style={{ display: (!photoTaken && cameraEnabled) ? "block" : "none" }} width={width} autoPlay muted playsInline ></video>
+            <canvas id="webcamPicture" style={{ display: (photoTaken && cameraEnabled) ? "block" : "none" }} width={width} height={height}></canvas>
             <button type="button" id="toggleTorch" onClick={toggleTorchState}>Toggle Flash</button>
             <button type="button" onClick={takePicture}>Take Photo</button>
             <button type="button" onClick={resetPicture}>Reset Photo</button>
@@ -98,4 +102,4 @@ function WebcamVideo(props: any) {
     )
 };
 
-export default WebcamVideo;
+export default One;

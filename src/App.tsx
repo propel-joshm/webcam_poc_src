@@ -1,24 +1,60 @@
 import './App.css';
-import WebcamVideo from './webcam';
+import { useState } from 'react';
+import One from './webcam';
+import Two from './webcamTwo';
+import Three from './webcamThree';
 
 
 function App() {
+  const [state, setState] = useState("start");
 
-  const height = 480;
-  const width = 480;
-
+  const AddSolution = (props: any) => {
+    return (
+      <button type='button' onClick={props.addSolution}>
+        {props.text}
+      </button>
+    );
+  };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <WebcamVideo height={height} width={width}></WebcamVideo>
-        {/* <video id="webcamVideo" height={constraints.height} width={constraints.width} autoPlay muted playsInline ></video> */}
-        <div id="outputText"></div>
-        <div id="outputConstraintError"></div>
-        <div id="outputFlipState"></div>
+    <div className='App'>
+      <header className='App-header'>
+        {state === "start" && (
+          <div>
+            <AddSolution
+              text={"version 1"}
+              addSolution={() => setState("version 1")}
+            />
+            <AddSolution
+              text={"version 2"}
+              addSolution={() => setState("version 2")}
+            />
+             <AddSolution
+              text={"version 3"}
+              addSolution={() => setState("version 3")}
+            />
+          </div>
+        )}
+        <main>
+          {state === "version 1" && <One />}
+          {state === "version 2" && <Two />}
+          {state === "version 3" && <Three />}
+        </main>
+
+
+        {state !== "start" && (
+          <div>
+            <div id='outputText'>Output Text:</div>
+            <div id='outputConstraintError'>Constraint Error:</div>
+            <div id='outputFlipState'>Flip State:</div>
+          </div>
+        )}
+
+        <AddSolution text={"reset"} addSolution={() => setState("start")} />
       </header>
     </div>
   );
 }
+
 
 export default App;
