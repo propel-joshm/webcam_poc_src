@@ -56,7 +56,7 @@ function App() {
             <div className="output" id='outputFlipState'>Flip State:</div>
           </div>
 
-        <AddSolution text={"reset"} addSolution={() => setState("start")} />
+        <AddSolution text={"Go Back to Selection"} addSolution={() => setState("start")} />
         <button onClick={() => {resetOutputs(outputs)}}>Reset Outputs</button>
       </header>
     </div>
