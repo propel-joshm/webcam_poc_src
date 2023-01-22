@@ -54,7 +54,7 @@ function Two() {
 		let track = stream.current?.getVideoTracks()[0] as MediaStreamTrackOES;
 		let caps = {...track?.getConstraints()};
 		
-		outputText.textContent = `Facing Mode: ${caps.facingMode}, Torch: ${(caps) ? caps.torch : "undefined"}`;
+		outputText.textContent = `Facing Mode: ${caps.facingMode}, Torch: ${(caps.torch) ? caps.torch : "undefined"}`;
 	}
 
    
