@@ -42,13 +42,13 @@ function App() {
         </main>
 
 
-        {state !== "start" && (
+        {/* {state !== "start" && ( */}
           <div>
             <div id='outputText'>Output Text:</div>
             <div id='outputConstraintError'>Constraint Error:</div>
             <div id='outputFlipState'>Flip State:</div>
           </div>
-        )}
+        {/*  )} */}
 
         <AddSolution text={"reset"} addSolution={() => setState("start")} />
       </header>

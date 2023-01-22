@@ -4,46 +4,47 @@ import { MediaTrackConstraintsOES } from './interfaces/MediaStreamTrackSetOES';
 function Two(props:any) {
 
     const outputText = document.getElementById("outputText")!;
-    const outputConstraintError = document.getElementById("outputConstraintError");
+    const outputConstraintError = document.getElementById("outputConstraintError")!;
     const outputFlipState = document.getElementById("outputFlipState");
 
     let streamRef: MediaStream;
 
     const constraints = {
         video: {
-            facingMode: { exact: 'environment' },
+            facingMode: { ideal: 'environment' },
         }
     }
 
-    function applyTorch(stream:MediaStream) {
+    function applyTorchOne(stream:MediaStream) {
         let track = stream.getVideoTracks()[0];
-        
         try {
             track.applyConstraints({torch: true} as MediaTrackConstraintsOES);
-            outputText.textContent = outputText.innerText.concat("First Success");
-        } catch {
+        } catch (err) {
+            if (err instanceof OverconstrainedError) outputConstraintError.textContent = err.constraint;
             outputText.textContent = outputText.innerText.concat("First Failed");
         }
+    }
 
+    function applyTorchTwo(stream:MediaStream) {
+        let track = stream.getVideoTracks()[0];
         try {
             track.applyConstraints({advanced: [{torch: true}]} as MediaTrackConstraintsOES);
-            outputText.textContent = outputText.innerText.concat("Second Success");
         } catch(err) {
+            if (err instanceof OverconstrainedError) outputConstraintError.textContent = err.constraint;
             outputText.textContent = outputText.innerText.concat("Second Failed");
         }
-        
     }
 
     navigator.mediaDevices.getUserMedia(constraints)
-        .then(stream => { streamRef = stream})
-
-
-
+        .then(stream => { 
+            streamRef = stream
+            console.log(stream);
+        })
 
     return (
         <div>
-        <button onClick={() => { (streamRef) ? applyTorch(streamRef) : console.log("Stream not found")}}>Click Me</button>
-        <div>Flash toggled on</div>
+            <button onClick={() => { (streamRef) ? applyTorchOne(streamRef) : console.log("Stream not found")}}>Torch V1</button>
+            <button onClick={() => { (streamRef) ? applyTorchTwo(streamRef) : console.log("Stream not found")}}>Torch V2</button>
         </div>
     )
 }
