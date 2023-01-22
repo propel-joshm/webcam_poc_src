@@ -22,7 +22,7 @@ function Two() {
 	function setStream() {
 		const constraints = {
 			video: {
-				facingMode: { ideal: "environment" },
+				facingMode: { exact: "environment" },
 			},
 		};
 		navigator.mediaDevices.getUserMedia(constraints)
