@@ -8,6 +8,14 @@ import Three from './webcamThree';
 function App() {
   const [state, setState] = useState("start");
 
+  const outputs = document.querySelectorAll('.output');
+
+  function resetOutputs(outputs: NodeList) {
+    outputs.forEach(o => {
+      o.textContent = '';
+    })
+  }
+
   const AddSolution = (props: any) => {
     return (
       <button type='button' onClick={props.addSolution}>
@@ -42,15 +50,14 @@ function App() {
         </main>
 
 
-        {/* {state !== "start" && ( */}
           <div>
-            <div id='outputText'>Output Text:</div>
-            <div id='outputConstraintError'>Constraint Error:</div>
-            <div id='outputFlipState'>Flip State:</div>
+            <div className="output" id='outputText'>Output Text:</div>
+            <div className="output" id='outputConstraintError'>Constraint Error:</div>
+            <div className="output" id='outputFlipState'>Flip State:</div>
           </div>
-        {/*  )} */}
 
         <AddSolution text={"reset"} addSolution={() => setState("start")} />
+        <button onClick={() => {resetOutputs(outputs)}}>Reset Outputs</button>
       </header>
     </div>
   );

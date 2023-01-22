@@ -15,36 +15,46 @@ function Two(props:any) {
         }
     }
 
-    function applyTorchOne(stream:MediaStream) {
-        let track = stream.getVideoTracks()[0];
-        try {
-            track.applyConstraints({torch: true} as MediaTrackConstraintsOES);
-        } catch (err) {
-            if (err instanceof OverconstrainedError) outputConstraintError.textContent = err.constraint;
-            outputText.textContent = outputText.innerText.concat("First Failed");
-        }
-    }
-
-    function applyTorchTwo(stream:MediaStream) {
-        let track = stream.getVideoTracks()[0];
-        try {
-            track.applyConstraints({advanced: [{torch: true}]} as MediaTrackConstraintsOES);
-        } catch(err) {
-            if (err instanceof OverconstrainedError) outputConstraintError.textContent = err.constraint;
-            outputText.textContent = outputText.innerText.concat("Second Failed");
-        }
-    }
+    const torchOne = {torch: true};
+    const torchTwo = {advanced: [{torch: true}]};
 
     navigator.mediaDevices.getUserMedia(constraints)
-        .then(stream => { 
-            streamRef = stream
-            console.log(stream);
-        })
+    .then(stream => { 
+        streamRef = stream
+        console.log(stream);
+    })
+
+    function applyTorch(stream:MediaStream, torchObj: MediaTrackConstraintsOES, trigger: string) {
+        let track = stream.getVideoTracks()[0];
+        console.log(track);
+        console.log(torchObj)
+
+        track.applyConstraints({torch: true} as MediaTrackConstraintsOES)
+            .catch(err => {
+                if (err instanceof OverconstrainedError){
+                    outputConstraintError.textContent = err.constraint;
+                } 
+                outputText.textContent = `${trigger} Failed`;
+            });
+            
+    }
+
+    function logConstraints(stream: MediaStream) {
+        let track = stream.getVideoTracks()[0];
+        console.log(`Settings:`, track.getSettings());
+        console.log(`Constraints:`, track.getConstraints());
+        console.log(`Capabilities:`, track.getCapabilities());
+    }
+
+   
 
     return (
         <div>
-            <button onClick={() => { (streamRef) ? applyTorchOne(streamRef) : console.log("Stream not found")}}>Torch V1</button>
-            <button onClick={() => { (streamRef) ? applyTorchTwo(streamRef) : console.log("Stream not found")}}>Torch V2</button>
+            <div>
+                <button onClick={() => { (streamRef) ? applyTorch(streamRef, torchOne, "Torch V1") : console.log("Stream not found")}}>Torch V1</button>
+                <button onClick={() => { (streamRef) ? applyTorch(streamRef, torchTwo, "Torch V2") : console.log("Stream not found")}}>Torch V2</button>
+            </div>
+            <button onClick={() => { (streamRef) ? logConstraints(streamRef) : console.log("Stream not found")}}>Log Constraints</button>
         </div>
     )
 }
