@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
+import { MediaTrackConstraintsOES } from './interfaces/MediaStreamTrackSetOES';
 
 function Two(props:any) {
 
@@ -15,23 +16,26 @@ function Two(props:any) {
     }
 
     function applyTorch(stream:MediaStream) {
-        let track = stream.getTracks();
-
-        let sb = '';
-
-        track.forEach(track => {
-            sb = sb.concat(track.toString());
-            console.log(sb);
-            console.log(track);
-        })
+        let track = stream.getVideoTracks()[0];
         
-       outputText.textContent = sb;
+        try {
+            track.applyConstraints({torch: true} as MediaTrackConstraintsOES);
+            outputText.textContent = outputText.innerText.concat("First Success");
+        } catch {
+            outputText.textContent = outputText.innerText.concat("First Failed");
+        }
+
+        try {
+            track.applyConstraints({advanced: [{torch: true}]} as MediaTrackConstraintsOES);
+            outputText.textContent = outputText.innerText.concat("Second Success");
+        } catch(err) {
+            outputText.textContent = outputText.innerText.concat("Second Failed");
+        }
+        
     }
 
     navigator.mediaDevices.getUserMedia(constraints)
-        .then(stream => {
-            streamRef = stream;
-    })
+        .then(stream => { streamRef = stream})
 
 
 
