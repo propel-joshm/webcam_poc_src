@@ -6,3 +6,6 @@ export interface MediaTrackConstraintsOES extends MediaTrackConstraintSetOES {
     advanced?: MediaTrackConstraintSetOES[]
   };
 
+ export interface MediaStreamTrackOES extends MediaStreamTrack {
+    getConstraints():MediaTrackConstraintsOES
+  };

@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, MutableRefObject} from 'react';
-import { MediaTrackConstraintsOES } from './interfaces/MediaStreamTrackSetOES';
+import { MediaTrackConstraintsOES, MediaStreamTrackOES } from './interfaces/MediaStreamTrackSetOES';
 
 function Two() {
 
@@ -12,17 +12,25 @@ function Two() {
 	const torchTwo = {advanced: [{torch: true}]};
 
 	useEffect(() => {
+		setStream();
+	}, [streamRef]);
+
+	function setStream() {
+
 		const constraints = {
 			video: {
 				facingMode: { ideal: "environment" },
 			},
 		};
-	
-		navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-			streamRef.current = stream;
-			console.log(stream);
-		});
-	}, [streamRef]);
+		
+		console.log(navigator.mediaDevices.getSupportedConstraints());
+
+		navigator.mediaDevices.getUserMedia(constraints)
+			.then((stream) => {
+				streamRef.current = stream;
+				console.log(stream);
+			});
+	}
 
 	function applyTorch(
 		stream: MutableRefObject<MediaStream | null>,
@@ -43,10 +51,10 @@ function Two() {
 	}
 
 	function logConstraints(stream: MutableRefObject<MediaStream | null>) {
-		let track = stream.current?.getVideoTracks()[0];
-		console.log(`Settings:`, track?.getSettings());
-		console.log(`Constraints:`, track?.getConstraints());
-		console.log(`Capabilities:`, track?.getCapabilities());
+		let track = stream.current?.getVideoTracks()[0] as MediaStreamTrackOES;
+		let caps = {...track?.getConstraints()};
+		
+		outputText.textContent = `Facing Mode: ${caps.facingMode}, Torch: ${(caps) ? caps.torch : "undefined"}`;
 	}
 
    
