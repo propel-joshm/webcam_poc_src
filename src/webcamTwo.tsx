@@ -29,7 +29,7 @@ function Two(props:any) {
         console.log(track);
         console.log(torchObj)
 
-        track.applyConstraints({torch: true} as MediaTrackConstraintsOES)
+        track.applyConstraints(torchObj)
             .catch(err => {
                 if (err instanceof OverconstrainedError){
                     outputConstraintError.textContent = err.constraint;
